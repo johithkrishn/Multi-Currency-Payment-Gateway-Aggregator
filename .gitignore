@@ -1,0 +1,29 @@
+# Dependencies
+node_modules/
+mobile/node_modules/
+
+# Expo / React Native
+mobile/.expo/
+mobile/dist/
+mobile/web-build/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig.*
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Local env (this project needs no secrets — never commit any)
+.env
+.env.*

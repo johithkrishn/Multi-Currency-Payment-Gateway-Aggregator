@@ -1,0 +1,290 @@
+[
+  {
+    "id": "SIM-RZP-20261118-RZQFPB",
+    "createdAt": "2026-11-18T09:00:00.000Z",
+    "sourceAmount": 100,
+    "sourceCurrency": "USD",
+    "targetCurrency": "INR",
+    "exchangeRate": 83,
+    "convertedAmount": 8300,
+    "providerId": "razorpay_mock",
+    "providerName": "Razorpay-like Mock",
+    "feePercent": 2,
+    "feeFixed": 0,
+    "feeAmount": 166,
+    "feeCurrency": "INR",
+    "totalAmount": 8466,
+    "status": "SUCCESS",
+    "failureCode": null,
+    "failureReason": null,
+    "outcomeMode": "rule_based",
+    "outcomeRule": "No failure rule matched",
+    "rateLabel": "Demo exchange rate",
+    "rateSource": "Illustrative demonstration table (PRD v1.0 sample values)",
+    "rateUpdatedAt": "2026-01-01T00:00:00.000Z",
+    "rateVersion": 1,
+    "timeline": [
+      {
+        "state": "CREATED",
+        "label": "Attempt created",
+        "at": "2026-11-18T09:00:00.000Z"
+      },
+      {
+        "state": "AUTHORIZING",
+        "label": "Mock authorisation",
+        "at": "2026-11-18T09:00:00.520Z"
+      },
+      {
+        "state": "PROCESSING",
+        "label": "Mock processing",
+        "at": "2026-11-18T09:00:01.040Z"
+      },
+      {
+        "state": "SUCCESS",
+        "label": "Simulated success",
+        "at": "2026-11-18T09:00:01.770Z"
+      }
+    ],
+    "mode": "SIMULATED"
+  },
+  {
+    "id": "SIM-STR-20261118-F6VNZN",
+    "createdAt": "2026-11-18T09:07:00.000Z",
+    "sourceAmount": 2500,
+    "sourceCurrency": "EUR",
+    "targetCurrency": "USD",
+    "exchangeRate": 1.0869565217391304,
+    "convertedAmount": 2717.39,
+    "providerId": "stripe_mock",
+    "providerName": "Stripe-like Mock",
+    "feePercent": 2.9,
+    "feeFixed": 0,
+    "feeAmount": 78.8,
+    "feeCurrency": "USD",
+    "totalAmount": 2796.19,
+    "status": "SUCCESS",
+    "failureCode": null,
+    "failureReason": null,
+    "outcomeMode": "rule_based",
+    "outcomeRule": "No failure rule matched",
+    "rateLabel": "Demo exchange rate",
+    "rateSource": "Illustrative demonstration table (PRD v1.0 sample values)",
+    "rateUpdatedAt": "2026-01-01T00:00:00.000Z",
+    "rateVersion": 1,
+    "timeline": [
+      {
+        "state": "CREATED",
+        "label": "Attempt created",
+        "at": "2026-11-18T09:07:00.000Z"
+      },
+      {
+        "state": "AUTHORIZING",
+        "label": "Mock authorisation",
+        "at": "2026-11-18T09:07:00.520Z"
+      },
+      {
+        "state": "PROCESSING",
+        "label": "Mock processing",
+        "at": "2026-11-18T09:07:01.040Z"
+      },
+      {
+        "state": "SUCCESS",
+        "label": "Simulated success",
+        "at": "2026-11-18T09:07:01.770Z"
+      }
+    ],
+    "mode": "SIMULATED"
+  },
+  {
+    "id": "SIM-STR-20261118-03C4CR",
+    "createdAt": "2026-11-18T09:14:00.000Z",
+    "sourceAmount": 100.13,
+    "sourceCurrency": "USD",
+    "targetCurrency": "EUR",
+    "exchangeRate": 0.92,
+    "convertedAmount": 92.12,
+    "providerId": "stripe_mock",
+    "providerName": "Stripe-like Mock",
+    "feePercent": 2.9,
+    "feeFixed": 0,
+    "feeAmount": 2.67,
+    "feeCurrency": "EUR",
+    "totalAmount": 94.79,
+    "status": "FAILED",
+    "failureCode": "SIM_ISSUER_DECLINED",
+    "failureReason": "Simulated issuer decline (demo rule: amount ending in .13).",
+    "outcomeMode": "rule_based",
+    "outcomeRule": "R1 amount ends in .13",
+    "rateLabel": "Demo exchange rate",
+    "rateSource": "Illustrative demonstration table (PRD v1.0 sample values)",
+    "rateUpdatedAt": "2026-01-01T00:00:00.000Z",
+    "rateVersion": 1,
+    "timeline": [
+      {
+        "state": "CREATED",
+        "label": "Attempt created",
+        "at": "2026-11-18T09:14:00.000Z"
+      },
+      {
+        "state": "AUTHORIZING",
+        "label": "Mock authorisation",
+        "at": "2026-11-18T09:14:00.520Z"
+      },
+      {
+        "state": "PROCESSING",
+        "label": "Mock processing",
+        "at": "2026-11-18T09:14:01.040Z"
+      },
+      {
+        "state": "FAILED",
+        "label": "Simulated failure",
+        "at": "2026-11-18T09:14:01.770Z"
+      }
+    ],
+    "mode": "SIMULATED"
+  },
+  {
+    "id": "SIM-RZP-20261118-5WVG00",
+    "createdAt": "2026-11-18T09:21:00.000Z",
+    "sourceAmount": 30000,
+    "sourceCurrency": "USD",
+    "targetCurrency": "INR",
+    "exchangeRate": 83,
+    "convertedAmount": 2490000,
+    "providerId": "razorpay_mock",
+    "providerName": "Razorpay-like Mock",
+    "feePercent": 2,
+    "feeFixed": 0,
+    "feeAmount": 49800,
+    "feeCurrency": "INR",
+    "totalAmount": 2539800,
+    "status": "FAILED",
+    "failureCode": "SIM_RISK_LIMIT",
+    "failureReason": "Simulated risk-limit decline (demo rule: above 25,000 USD equivalent).",
+    "outcomeMode": "rule_based",
+    "outcomeRule": "R2 above risk limit",
+    "rateLabel": "Demo exchange rate",
+    "rateSource": "Illustrative demonstration table (PRD v1.0 sample values)",
+    "rateUpdatedAt": "2026-01-01T00:00:00.000Z",
+    "rateVersion": 1,
+    "timeline": [
+      {
+        "state": "CREATED",
+        "label": "Attempt created",
+        "at": "2026-11-18T09:21:00.000Z"
+      },
+      {
+        "state": "AUTHORIZING",
+        "label": "Mock authorisation",
+        "at": "2026-11-18T09:21:00.520Z"
+      },
+      {
+        "state": "PROCESSING",
+        "label": "Mock processing",
+        "at": "2026-11-18T09:21:01.040Z"
+      },
+      {
+        "state": "FAILED",
+        "label": "Simulated failure",
+        "at": "2026-11-18T09:21:01.770Z"
+      }
+    ],
+    "mode": "SIMULATED"
+  },
+  {
+    "id": "SIM-STR-20261118-KPQTVW",
+    "createdAt": "2026-11-18T09:28:00.000Z",
+    "sourceAmount": 999,
+    "sourceCurrency": "USD",
+    "targetCurrency": "INR",
+    "exchangeRate": 83,
+    "convertedAmount": 82917,
+    "providerId": "stripe_mock",
+    "providerName": "Stripe-like Mock",
+    "feePercent": 2.9,
+    "feeFixed": 0,
+    "feeAmount": 2404.59,
+    "feeCurrency": "INR",
+    "totalAmount": 85321.59,
+    "status": "FAILED",
+    "failureCode": "SIM_INSUFFICIENT_BALANCE",
+    "failureReason": "Simulated insufficient balance (demo failure).",
+    "outcomeMode": "failure",
+    "outcomeRule": "Demo control: always fail",
+    "rateLabel": "Demo exchange rate",
+    "rateSource": "Illustrative demonstration table (PRD v1.0 sample values)",
+    "rateUpdatedAt": "2026-01-01T00:00:00.000Z",
+    "rateVersion": 1,
+    "timeline": [
+      {
+        "state": "CREATED",
+        "label": "Attempt created",
+        "at": "2026-11-18T09:28:00.000Z"
+      },
+      {
+        "state": "AUTHORIZING",
+        "label": "Mock authorisation",
+        "at": "2026-11-18T09:28:00.520Z"
+      },
+      {
+        "state": "PROCESSING",
+        "label": "Mock processing",
+        "at": "2026-11-18T09:28:01.040Z"
+      },
+      {
+        "state": "FAILED",
+        "label": "Simulated failure",
+        "at": "2026-11-18T09:28:01.770Z"
+      }
+    ],
+    "mode": "SIMULATED"
+  },
+  {
+    "id": "SIM-STR-20261118-GX366A",
+    "createdAt": "2026-11-18T09:35:00.000Z",
+    "sourceAmount": 15000,
+    "sourceCurrency": "INR",
+    "targetCurrency": "EUR",
+    "exchangeRate": 0.01108433734939759,
+    "convertedAmount": 166.27,
+    "providerId": "stripe_mock",
+    "providerName": "Stripe-like Mock",
+    "feePercent": 2.9,
+    "feeFixed": 0,
+    "feeAmount": 4.82,
+    "feeCurrency": "EUR",
+    "totalAmount": 171.09,
+    "status": "SUCCESS",
+    "failureCode": null,
+    "failureReason": null,
+    "outcomeMode": "rule_based",
+    "outcomeRule": "No failure rule matched",
+    "rateLabel": "Demo exchange rate",
+    "rateSource": "Illustrative demonstration table (PRD v1.0 sample values)",
+    "rateUpdatedAt": "2026-01-01T00:00:00.000Z",
+    "rateVersion": 1,
+    "timeline": [
+      {
+        "state": "CREATED",
+        "label": "Attempt created",
+        "at": "2026-11-18T09:35:00.000Z"
+      },
+      {
+        "state": "AUTHORIZING",
+        "label": "Mock authorisation",
+        "at": "2026-11-18T09:35:00.520Z"
+      },
+      {
+        "state": "PROCESSING",
+        "label": "Mock processing",
+        "at": "2026-11-18T09:35:01.040Z"
+      },
+      {
+        "state": "SUCCESS",
+        "label": "Simulated success",
+        "at": "2026-11-18T09:35:01.770Z"
+      }
+    ],
+    "mode": "SIMULATED"
+  }
+]

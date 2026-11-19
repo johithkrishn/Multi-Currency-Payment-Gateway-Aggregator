@@ -1,0 +1,56 @@
+{
+  "description": "Shared calculation fixtures. Web (web/js), mobile (mobile/src/core) and the Python helper (tools/fx_helper.py) must all produce these exact display values. Rates: PRD v1.0 demo table (1 USD = 83.0 INR = 0.92 EUR). Convention: converted = amount × fxRates[source][target]. Fee is in the target currency; total = round(converted) + round(fee).",
+  "fxRates": { "base": "USD", "rates": { "USD": 1, "INR": 83.0, "EUR": 0.92 } },
+  "providers": {
+    "stripe_mock": { "feePercent": 2.9, "feeFixed": 0 },
+    "razorpay_mock": { "feePercent": 2.0, "feeFixed": 0 }
+  },
+  "conversions": [
+    { "id": "C01", "amount": "100", "source": "USD", "target": "INR", "provider": "stripe_mock", "rate": "83.0000", "converted": 8300.00, "fee": 240.70, "total": 8540.70 },
+    { "id": "C02", "amount": "100", "source": "USD", "target": "INR", "provider": "razorpay_mock", "rate": "83.0000", "converted": 8300.00, "fee": 166.00, "total": 8466.00 },
+    { "id": "C03", "amount": "100", "source": "USD", "target": "USD", "provider": "stripe_mock", "rate": "1.0000", "converted": 100.00, "fee": 2.90, "total": 102.90 },
+    { "id": "C04", "amount": "2500", "source": "EUR", "target": "USD", "provider": "razorpay_mock", "rate": "1.0870", "converted": 2717.39, "fee": 54.35, "total": 2771.74 },
+    { "id": "C05", "amount": "2500", "source": "EUR", "target": "USD", "provider": "stripe_mock", "rate": "1.0870", "converted": 2717.39, "fee": 78.80, "total": 2796.19 },
+    { "id": "C06", "amount": "15000", "source": "INR", "target": "EUR", "provider": "stripe_mock", "rate": "0.011084", "converted": 166.27, "fee": 4.82, "total": 171.09 },
+    { "id": "C07", "amount": "1000", "source": "INR", "target": "USD", "provider": "razorpay_mock", "rate": "0.012048", "converted": 12.05, "fee": 0.24, "total": 12.29 },
+    { "id": "C08", "amount": "0.01", "source": "EUR", "target": "INR", "provider": "stripe_mock", "rate": "90.2174", "converted": 0.90, "fee": 0.03, "total": 0.93 },
+    { "id": "C09", "amount": "1000000", "source": "USD", "target": "EUR", "provider": "razorpay_mock", "rate": "0.920000", "converted": 920000.00, "fee": 18400.00, "total": 938400.00 },
+    { "id": "C10", "amount": "499.99", "source": "USD", "target": "INR", "provider": "stripe_mock", "rate": "83.0000", "converted": 41499.17, "fee": 1203.48, "total": 42702.65 },
+    { "id": "C11", "amount": "820", "source": "EUR", "target": "INR", "provider": "razorpay_mock", "rate": "90.2174", "converted": 73978.26, "fee": 1479.57, "total": 75457.83 },
+    { "id": "C12", "amount": "1,250.50", "source": "INR", "target": "INR", "provider": "razorpay_mock", "rate": "1.0000", "converted": 1250.50, "fee": 25.01, "total": 1275.51 }
+  ],
+  "validation": [
+    { "input": "", "ok": false, "code": "EMPTY" },
+    { "input": "   ", "ok": false, "code": "EMPTY" },
+    { "input": "0", "ok": false, "code": "ZERO" },
+    { "input": "0.00", "ok": false, "code": "ZERO" },
+    { "input": "-5", "ok": false, "code": "NEGATIVE" },
+    { "input": "abc", "ok": false, "code": "MALFORMED" },
+    { "input": "1e5", "ok": false, "code": "MALFORMED" },
+    { "input": "12,34", "ok": false, "code": "MALFORMED" },
+    { "input": "1.2.3", "ok": false, "code": "MALFORMED" },
+    { "input": "1.234", "ok": false, "code": "DECIMALS" },
+    { "input": "1000000.01", "ok": false, "code": "TOO_LARGE" },
+    { "input": "100", "ok": true, "value": 100 },
+    { "input": " 99.50 ", "ok": true, "value": 99.5 },
+    { "input": ".5", "ok": true, "value": 0.5 },
+    { "input": "1,250.50", "ok": true, "value": 1250.5 },
+    { "input": "1,00,000", "ok": true, "value": 100000 },
+    { "input": "1,000,000", "ok": true, "value": 1000000 },
+    { "input": "1,0,00", "ok": false, "code": "MALFORMED" },
+    { "input": "99,5", "ok": false, "code": "MALFORMED" },
+    { "input": "1000000", "ok": true, "value": 1000000 }
+  ],
+  "outcomes": [
+    { "id": "O01", "mode": "rule_based", "amount": 100, "source": "USD", "provider": "stripe_mock", "status": "SUCCESS", "failureCode": null },
+    { "id": "O02", "mode": "rule_based", "amount": 100.13, "source": "USD", "provider": "stripe_mock", "status": "FAILED", "failureCode": "SIM_ISSUER_DECLINED" },
+    { "id": "O03", "mode": "rule_based", "amount": 64.13, "source": "EUR", "provider": "razorpay_mock", "status": "FAILED", "failureCode": "SIM_ISSUER_DECLINED" },
+    { "id": "O04", "mode": "rule_based", "amount": 25000, "source": "USD", "provider": "razorpay_mock", "status": "SUCCESS", "failureCode": null },
+    { "id": "O05", "mode": "rule_based", "amount": 25000.01, "source": "USD", "provider": "razorpay_mock", "status": "FAILED", "failureCode": "SIM_RISK_LIMIT" },
+    { "id": "O06", "mode": "rule_based", "amount": 30000, "source": "EUR", "provider": "stripe_mock", "status": "FAILED", "failureCode": "SIM_RISK_LIMIT" },
+    { "id": "O07", "mode": "rule_based", "amount": 1000000, "source": "INR", "provider": "stripe_mock", "status": "SUCCESS", "failureCode": null },
+    { "id": "O08", "mode": "rule_based", "amount": 100, "source": "USD", "provider": "stripe_mock", "providerEnabled": false, "status": "FAILED", "failureCode": "SIM_PROVIDER_UNAVAILABLE" },
+    { "id": "O09", "mode": "success", "amount": 100.13, "source": "USD", "provider": "stripe_mock", "status": "SUCCESS", "failureCode": null },
+    { "id": "O10", "mode": "failure", "amount": 100, "source": "USD", "provider": "stripe_mock", "forcedFailure": "SIM_AUTH_FAILED", "status": "FAILED", "failureCode": "SIM_AUTH_FAILED" }
+  ]
+}

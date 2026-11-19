@@ -1,0 +1,31 @@
+{
+  "_note": "ILLUSTRATIVE DEMO RATES — not live market quotes. Convention: fxRates[source][target] = target units per 1 source unit. Cross rates derive from base rates: fxRates[s][t] = base[t] / base[s].",
+  "base": "USD",
+  "rates": {
+    "USD": 1,
+    "INR": 83,
+    "EUR": 0.92
+  },
+  "label": "Demo exchange rate",
+  "source": "Illustrative demonstration table (PRD v1.0 sample values)",
+  "disclaimer": "Illustrative rate only. No live FX quote is provided.",
+  "updatedAt": "2026-01-01T00:00:00.000Z",
+  "version": 1,
+  "fxRates": {
+    "USD": {
+      "USD": 1,
+      "INR": 83,
+      "EUR": 0.92
+    },
+    "INR": {
+      "USD": 0.012048192771084338,
+      "INR": 1,
+      "EUR": 0.01108433734939759
+    },
+    "EUR": {
+      "USD": 1.0869565217391304,
+      "INR": 90.21739130434783,
+      "EUR": 1
+    }
+  }
+}

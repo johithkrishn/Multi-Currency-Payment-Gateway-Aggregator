@@ -1,0 +1,233 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout · PayBridge Demo</title>
+  <meta name="description" content="Educational multi-currency payment gateway aggregator demo: compare mock providers, preview demo FX conversion and simulate payment outcomes. No real payments.">
+  <meta name="theme-color" content="#0F0B26">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2360A5FA'/%3E%3Cstop offset='.45' stop-color='%232563EB'/%3E%3Cstop offset='1' stop-color='%231E3A8A'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='40' height='40' rx='12' fill='url(%23g)'/%3E%3Cpath d='M14 18.8V27M20 16.6V27M26 18.8V27' stroke='white' stroke-opacity='.5' stroke-width='1.6'/%3E%3Cpath d='M6.5 27.5H33.5' stroke='white' stroke-width='2.2' stroke-linecap='round'/%3E%3Cpath d='M9 27C13 13 27 13 31 27' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round'/%3E%3Ccircle cx='20' cy='16.6' r='2.9' fill='%23FCD34D' stroke='white'/%3E%3C/svg%3E">
+  <script>
+    // Pre-paint theme to avoid a flash (reads mcpa_settings_v1 safely).
+    (function () { try { var s = JSON.parse(localStorage.getItem("mcpa_settings_v1") || "{}"); var t = s.theme === "day" ? "light" : "dark"; document.documentElement.setAttribute("data-bs-theme", t); } catch (e) {} })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+</head>
+<body>
+  <div id="app-navbar"></div>
+
+  <main id="main" class="container-xl py-4 py-lg-5" tabindex="-1">
+    <div id="page-alerts"></div>
+
+    <!-- ============================== CHECKOUT VIEW ============================== -->
+    <section id="view-checkout" aria-labelledby="checkout-title">
+      <header class="scene-band" data-scene="summit"><div class="container-xl band-inner"><div class="d-flex flex-wrap align-items-end justify-content-between gap-3" data-reveal>
+        <div>
+          <div class="section-eyebrow mb-2">01 / Merchant checkout</div>
+          <h1 class="page-title mb-0" id="checkout-title">Simulate a <span class="grad-text">cross-currency</span> payment</h1><span class="title-rule" aria-hidden="true"></span>
+          <p class="text-muted mb-0">Enter an amount, compare mock providers, preview the demo conversion — done in under 30 seconds.</p>
+        </div>
+        <a href="history.html" class="btn-soft text-decoration-none d-inline-flex align-items-center gap-2" id="history-count-link">
+          <i class="bi bi-clock-history" aria-hidden="true"></i><span id="history-count">0 simulated attempts</span>
+        </a>
+      </div></div></header>
+
+      <div class="row g-4 band-overlap">
+        <!-- ---------------- Form column ---------------- -->
+        <div class="col-lg-7">
+          <form id="checkout-form" class="card-app" novalidate aria-describedby="form-status">
+            <div class="card-pad d-grid gap-4">
+
+              <!-- AmountInput -->
+              <div>
+                <div class="label-row mb-2">
+                  <label class="form-label mb-0" for="amount-input">Amount <span class="text-muted fw-normal">(in source currency)</span></label>
+                  <span class="small text-muted">Max 1,000,000 · 2 decimals</span>
+                </div>
+                <div class="amount-wrap" id="amount-wrap">
+                  <span class="amount-prefix" id="amount-prefix" aria-hidden="true"><span class="flag">🇺🇸</span><span>USD</span></span>
+                  <input id="amount-input" class="amount-input" type="text" inputmode="decimal" autocomplete="off" spellcheck="false"
+                         placeholder="0.00" aria-describedby="amount-error amount-help" aria-invalid="false" required>
+                </div>
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mt-2">
+                  <div class="quick-amounts" role="group" aria-label="Quick amounts">
+                    <button type="button" data-amt="25">25</button>
+                    <button type="button" data-amt="100">100</button>
+                    <button type="button" data-amt="499.99">499.99</button>
+                    <button type="button" data-amt="2500">2,500</button>
+                    <button type="button" data-amt="100.13" title="Rule R1 — demonstrates a simulated failure">100.13 <i class="bi bi-bug" aria-hidden="true"></i></button>
+                  </div>
+                  <small id="amount-help" class="text-muted">Press <kbd>/</kbd> to focus</small>
+                </div>
+                <div id="amount-error" class="invalid-msg mt-2" role="alert" aria-live="assertive"></div>
+              </div>
+
+              <!-- CurrencySelector × 2 -->
+              <div class="ccy-row">
+                <fieldset>
+                  <legend class="form-label">From <span class="text-muted fw-normal">(source)</span></legend>
+                  <div class="ccy-group" id="source-group"></div>
+                </fieldset>
+                <button type="button" class="swap-btn" id="swap-btn" aria-label="Swap source and target currencies" title="Swap (S)">
+                  <i class="bi bi-arrow-left-right" aria-hidden="true"></i>
+                </button>
+                <fieldset>
+                  <legend class="form-label">To <span class="text-muted fw-normal">(target)</span></legend>
+                  <div class="ccy-group" id="target-group"></div>
+                </fieldset>
+              </div>
+
+              <!-- ExchangeRatePanel -->
+              <div class="rate-panel" id="rate-panel">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2 mb-2">
+                  <span class="rate-tag" id="rate-tag"><span class="live-dot" aria-hidden="true"></span><i class="bi bi-info-circle" aria-hidden="true"></i><span id="rate-label">Demo exchange rate</span></span>
+                  <div class="segmented segmented-sm" role="radiogroup" aria-label="Exchange-rate source">
+                    <input type="radio" name="ratesrc" id="rs-live" value="live"><label for="rs-live"><i class="bi bi-broadcast" aria-hidden="true"></i>Live</label>
+                    <input type="radio" name="ratesrc" id="rs-demo" value="demo"><label for="rs-demo"><i class="bi bi-table" aria-hidden="true"></i>Demo</label>
+                  </div>
+                </div>
+                <div class="d-flex flex-wrap justify-content-between align-items-end gap-2">
+                  <div>
+                    <div class="rate-direction" id="rate-direction" aria-live="polite">1 USD = 83 INR</div>
+                    <div class="small text-muted" id="rate-inverse">1 INR = 0.012048 USD</div>
+                    <div class="small mt-1" id="rate-delta"></div>
+                  </div>
+                  <div class="text-end small text-muted">
+                    <div><i class="bi bi-calendar3" aria-hidden="true"></i> <span id="rate-updated">—</span></div>
+                    <div id="rate-checked" class="mb-1"></div>
+                    <button type="button" class="btn btn-link btn-sm p-0 align-baseline" id="rate-refresh" hidden><i class="bi bi-arrow-clockwise" aria-hidden="true"></i> Refresh</button>
+                    <a href="settings.html" class="link-primary ms-2" id="rate-edit">Edit demo rates</a>
+                  </div>
+                </div>
+                <div class="fx-flow" aria-hidden="true">
+                  <span class="fx-node" id="flow-src">🇺🇸 USD</span>
+                  <div class="fx-track idle" id="fx-track"><span class="fx-rate-chip" id="flow-rate">× 83.0000</span></div>
+                  <span class="fx-node" id="flow-tgt">🇮🇳 INR</span>
+                </div>
+                <div class="formula mt-3"><span class="text-body-emphasis">convention</span> fxRates[<b id="conv-src">USD</b>][<b id="conv-tgt">INR</b>] = target units per 1 source unit · <span id="rate-source">—</span></div>
+                <p class="small text-muted mb-0 mt-2"><i class="bi bi-exclamation-circle" aria-hidden="true"></i> <span id="rate-disclaimer">Illustrative rate only. No live FX quote is provided.</span></p>
+              </div>
+
+              <!-- ProviderCard × n -->
+              <fieldset>
+                <div class="label-row mb-2">
+                  <legend class="form-label mb-0 w-auto float-none">Mock payment provider</legend>
+                  <small class="text-muted">Press <kbd>1</kbd> / <kbd>2</kbd></small>
+                </div>
+                <div class="provider-grid" id="provider-grid"></div>
+                <p class="mock-note mt-2 mb-0"><i class="bi bi-shield-exclamation" aria-hidden="true"></i>Mock provider — no real payment will be processed. Names describe a checkout pattern only; nothing connects to Stripe or Razorpay.</p>
+              </fieldset>
+
+              <!-- Demo outcome control -->
+              <div class="dev-panel">
+                <div class="d-flex flex-wrap justify-content-between align-items-center gap-2">
+                  <div>
+                    <div class="fw-semibold small"><i class="bi bi-code-slash" aria-hidden="true"></i> Demo outcome <span class="sim-badge ms-1">DEV CONTROL</span></div>
+                    <div class="small text-muted">Choose how the simulation resolves so both states can be demonstrated.</div>
+                  </div>
+                  <div class="segmented" role="radiogroup" aria-label="Demo outcome" id="outcome-group">
+                    <input type="radio" name="outcome" id="oc-success" value="success"><label for="oc-success"><i class="bi bi-check2-circle" aria-hidden="true"></i>Success</label>
+                    <input type="radio" name="outcome" id="oc-failure" value="failure"><label for="oc-failure"><i class="bi bi-x-circle" aria-hidden="true"></i>Failure</label>
+                    <input type="radio" name="outcome" id="oc-rules" value="rule_based"><label for="oc-rules"><i class="bi bi-diagram-3" aria-hidden="true"></i>Rules</label>
+                  </div>
+                </div>
+                <details class="mt-2 small">
+                  <summary class="text-primary" style="cursor:pointer">How the deterministic rules work</summary>
+                  <ol class="mt-2 mb-0 ps-3 text-muted">
+                    <li><b>R1</b> — amount with cents exactly <code>.13</code> → simulated issuer decline</li>
+                    <li><b>R2</b> — above 25,000 USD-equivalent → simulated risk-limit decline</li>
+                    <li><b>R3</b> — provider disabled in settings → simulated provider unavailable</li>
+                    <li>Otherwise → simulated success. No randomness, so demos are repeatable.</li>
+                  </ol>
+                </details>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- ---------------- Summary column (ConversionSummary + FeeBreakdown) ---------------- -->
+        <div class="col-lg-5">
+          <aside class="summary-sticky" aria-labelledby="summary-title">
+            <div class="card-app" data-reveal>
+              <div class="summary-hero" data-scene="summit" data-scene-scroll="false" data-scene-strength="0.5"><div class="float-symbols" aria-hidden="true"><span style="--x:8%;--d:0s;--t:9s">$</span><span style="--x:28%;--d:2.4s;--t:11s;--s:30px">₹</span><span style="--x:52%;--d:4.8s;--t:10s">€</span><span style="--x:72%;--d:1.2s;--t:12s;--s:34px">$</span><span style="--x:88%;--d:6s;--t:9.5s">₹</span><span style="--x:40%;--d:7.5s;--t:10.5s;--s:18px">€</span></div>
+                <h2 class="lbl mb-2" id="summary-title">Estimated converted amount</h2>
+                <div class="big money" id="sum-converted" aria-live="polite">—</div>
+                <div class="sub mt-1"><span id="sum-source">Enter an amount</span></div>
+              </div>
+              <div class="card-pad pt-3">
+                <ul class="breakdown" id="breakdown">
+                  <li><span>Amount (source)</span><strong id="bd-source">—</strong></li>
+                  <li><span id="bd-rate-label">Demo rate</span><strong id="bd-rate">—</strong></li>
+                  <li><span>Converted (target)</span><strong id="bd-converted">—</strong></li>
+                  <li><span id="bd-fee-label">Mock provider fee</span><strong id="bd-fee">—</strong></li>
+                  <li class="total"><span>Estimated total</span><strong id="bd-total">—</strong></li>
+                </ul>
+                <div class="formula mt-3" id="formula" aria-label="Calculation">Fee = converted × fee % (target currency). Total = converted + fee.</div>
+
+                <ul class="checklist my-4" aria-label="Checkout readiness">
+                  <li id="ck-amount"><i class="bi bi-check-circle-fill" aria-hidden="true"></i>Valid amount entered</li>
+                  <li id="ck-ccy"><i class="bi bi-check-circle-fill" aria-hidden="true"></i>Currencies &amp; demo rate ready</li>
+                  <li id="ck-provider"><i class="bi bi-check-circle-fill" aria-hidden="true"></i>Mock provider selected</li>
+                </ul>
+
+                <div class="d-grid gap-2">
+                  <button type="button" class="btn-glow spotlight-btn" id="review-btn" disabled aria-describedby="form-status" data-magnetic="0.12">
+                    <span class="shine" aria-hidden="true"></span><i class="bi bi-receipt" aria-hidden="true"></i> Review Payment
+                  </button>
+                  <button type="button" class="btn btn-link btn-sm text-muted" id="reset-btn"><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Reset form</button>
+                </div>
+                <p id="form-status" class="small text-muted text-center mb-0 mt-1" aria-live="polite"></p>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============================== RESULT VIEW ============================== -->
+    <section id="view-result" hidden aria-labelledby="result-title">
+      <div class="row justify-content-center">
+        <div class="col-xl-9">
+          <div class="mb-3 no-print"><a href="#" id="back-to-checkout" class="link-secondary text-decoration-none"><i class="bi bi-arrow-left" aria-hidden="true"></i> Back to checkout</a></div>
+          <article class="card-app" id="result-card"></article>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ============================== PAYMENT REVIEW MODAL ============================== -->
+  <div class="modal fade" id="review-modal" tabindex="-1" aria-labelledby="review-title" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title h5 d-flex align-items-center gap-2" id="review-title"><i class="bi bi-receipt-cutoff text-primary" aria-hidden="true"></i> Review simulated payment</h2>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cancel and close review" id="review-close"></button>
+        </div>
+        <div class="modal-body" id="review-body"></div>
+        <div class="modal-footer" id="review-footer">
+          <button type="button" class="btn-soft" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn-glow" id="simulate-btn"><i class="bi bi-play-circle" aria-hidden="true"></i> Simulate Payment</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="app-footer"></div>
+  <div id="sr-announcer" class="visually-hidden" aria-live="assertive"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/currency.js"></script>
+  <script src="js/live-rates.js"></script>
+  <script src="js/payment-simulator.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/motion.js"></script>
+  <script src="js/scene.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

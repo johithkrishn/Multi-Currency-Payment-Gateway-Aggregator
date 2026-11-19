@@ -1,0 +1,203 @@
+<!doctype html>
+<html lang="en" data-bs-theme="dark">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>FX Rates &amp; Settings · PayBridge Demo</title>
+  <meta name="description" content="Inspect and configure the illustrative demo exchange-rate table, mock provider fees and simulation behaviour.">
+  <meta name="theme-color" content="#0F0B26">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 40 40'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' y1='0' x2='1' y2='1'%3E%3Cstop offset='0' stop-color='%2360A5FA'/%3E%3Cstop offset='.45' stop-color='%232563EB'/%3E%3Cstop offset='1' stop-color='%231E3A8A'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='40' height='40' rx='12' fill='url(%23g)'/%3E%3Cpath d='M14 18.8V27M20 16.6V27M26 18.8V27' stroke='white' stroke-opacity='.5' stroke-width='1.6'/%3E%3Cpath d='M6.5 27.5H33.5' stroke='white' stroke-width='2.2' stroke-linecap='round'/%3E%3Cpath d='M9 27C13 13 27 13 31 27' fill='none' stroke='white' stroke-width='3.2' stroke-linecap='round'/%3E%3Ccircle cx='20' cy='16.6' r='2.9' fill='%23FCD34D' stroke='white'/%3E%3C/svg%3E">
+  <script>
+    (function () { try { var s = JSON.parse(localStorage.getItem("mcpa_settings_v1") || "{}"); var t = s.theme === "day" ? "light" : "dark"; document.documentElement.setAttribute("data-bs-theme", t); } catch (e) {} })();
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+</head>
+<body>
+  <div id="app-navbar"></div>
+
+  <main id="main" class="container-xl py-4 py-lg-5" tabindex="-1">
+    <div id="page-alerts"></div>
+
+    <header class="scene-band" data-scene="grove"><div class="container-xl band-inner"><div data-reveal>
+      <div class="section-eyebrow mb-2">03 / Developer &amp; evaluator</div>
+      <h1 class="page-title mb-0">FX rates &amp; demo settings</h1><span class="title-rule" aria-hidden="true"></span>
+      <p class="text-muted mb-0">Every value here is a <b>demonstration assumption</b>. Changing them never rewrites saved transactions — each record keeps its own snapshot.</p>
+    </div></div></header>
+
+    <div class="row g-4 band-overlap">
+      <!-- Rate source: live reference vs demo -->
+      <div class="col-12">
+        <section class="card-app card-pad" aria-labelledby="src-title" data-reveal>
+          <div class="d-flex flex-wrap justify-content-between align-items-start gap-3 mb-3">
+            <div>
+              <h2 class="h5 fw-bold mb-1" id="src-title"><i class="bi bi-broadcast text-primary" aria-hidden="true"></i> Exchange-rate source</h2>
+              <p class="small text-muted mb-0" style="max-width:640px">
+                <b>Live</b> fetches real reference rates — European Central Bank via Frankfurter, with ExchangeRate-API and currency-api as fallbacks — and re-checks every few minutes.
+                Reference rates are published once per business day, are not executable quotes, and no real payment is ever made.
+                <b>Demo</b> uses the editable illustrative table below. If every live source is unreachable, checkout falls back to the demo table and says so.
+              </p>
+            </div>
+            <div class="d-flex align-items-center gap-2">
+              <div class="segmented" role="radiogroup" aria-label="Exchange-rate source">
+                <input type="radio" name="srcmode" id="sm-live" value="live"><label for="sm-live"><i class="bi bi-broadcast" aria-hidden="true"></i>Live</label>
+                <input type="radio" name="srcmode" id="sm-demo" value="demo"><label for="sm-demo"><i class="bi bi-table" aria-hidden="true"></i>Demo</label>
+              </div>
+              <button type="button" class="btn-soft" id="src-refresh"><i class="bi bi-arrow-clockwise" aria-hidden="true"></i> Refresh</button>
+            </div>
+          </div>
+          <div class="row g-3 align-items-start">
+            <div class="col-lg-7">
+              <div class="table-responsive"><table class="table table-app live-table mb-0"><caption class="visually-hidden">Live reference rates compared with the demo table</caption>
+                <thead><tr><th scope="col">Pair</th><th scope="col" class="text-end">Live reference</th><th scope="col" class="text-end">Demo table</th><th scope="col" class="text-end">Difference</th></tr></thead>
+                <tbody id="live-rows"></tbody></table></div>
+            </div>
+            <div class="col-lg-5"><div class="formula" id="src-status" aria-live="polite">Loading…</div></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- FX Rate Reference -->
+      <div class="col-lg-7">
+        <section class="card-app card-pad h-100" aria-labelledby="fx-title" data-reveal>
+          <div class="d-flex flex-wrap justify-content-between align-items-start gap-2 mb-3">
+            <div>
+              <h2 class="h5 fw-bold mb-1" id="fx-title"><i class="bi bi-grid-3x3-gap text-primary" aria-hidden="true"></i> Demo exchange-rate matrix</h2>
+              <p class="small text-muted mb-0">Cell = <span class="mono">fxRates[row][column]</span> = column units per 1 row unit. Hover or focus a cell to see the formula.</p>
+            </div>
+            <span class="rate-tag"><i class="bi bi-info-circle" aria-hidden="true"></i> Illustrative</span>
+          </div>
+          <div class="table-responsive"><table class="fx-matrix" id="fx-matrix" aria-describedby="matrix-explain"><caption class="visually-hidden">Demo exchange-rate matrix, source currency rows and target currency columns</caption></table></div>
+          <div class="formula mt-3" id="matrix-explain" aria-live="polite">Select a cell to see how the cross rate is derived.</div>
+          <dl class="row small mt-3 mb-0">
+            <dt class="col-sm-4 text-muted fw-semibold">Label</dt><dd class="col-sm-8" id="fx-label">—</dd>
+            <dt class="col-sm-4 text-muted fw-semibold">Source</dt><dd class="col-sm-8" id="fx-source">—</dd>
+            <dt class="col-sm-4 text-muted fw-semibold">Rates labelled</dt><dd class="col-sm-8" id="fx-updated">—</dd>
+            <dt class="col-sm-4 text-muted fw-semibold">Table version</dt><dd class="col-sm-8" id="fx-version">—</dd>
+          </dl>
+          <p class="small text-muted mt-3 mb-0"><i class="bi bi-exclamation-circle" aria-hidden="true"></i> Illustrative rate only. No live FX quote is provided. Values are not current market rates.</p>
+        </section>
+      </div>
+
+      <!-- Edit base rates -->
+      <div class="col-lg-5">
+        <section class="card-app card-pad h-100" aria-labelledby="edit-title" data-reveal>
+          <h2 class="h5 fw-bold mb-1" id="edit-title"><i class="bi bi-pencil-square text-primary" aria-hidden="true"></i> Edit base rates</h2>
+          <p class="small text-muted">All cross rates derive from units per <b>1 USD</b>, so the matrix always stays internally consistent: <span class="mono">fxRates[s][t] = base[t] / base[s]</span>.</p>
+          <form id="rates-form" novalidate class="d-grid gap-3">
+            <div>
+              <label class="form-label" for="r-INR">🇮🇳 INR per 1 USD</label>
+              <input class="form-control mono" id="r-INR" inputmode="decimal" autocomplete="off" aria-describedby="r-INR-err">
+              <div class="invalid-msg mt-1" id="r-INR-err" role="alert"></div>
+            </div>
+            <div>
+              <label class="form-label" for="r-EUR">🇪🇺 EUR per 1 USD</label>
+              <input class="form-control mono" id="r-EUR" inputmode="decimal" autocomplete="off" aria-describedby="r-EUR-err">
+              <div class="invalid-msg mt-1" id="r-EUR-err" role="alert"></div>
+            </div>
+            <div>
+              <label class="form-label" for="r-label">Rate label</label>
+              <input class="form-control" id="r-label" maxlength="60">
+            </div>
+            <div class="d-flex flex-wrap gap-2">
+              <button type="submit" class="btn-glow"><i class="bi bi-save" aria-hidden="true"></i> Save demo rates</button>
+              <button type="button" class="btn-soft" id="rates-reset"><i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> PRD defaults</button>
+            </div>
+            <p class="small text-muted mb-0" id="rates-preview" aria-live="polite"></p>
+          </form>
+        </section>
+      </div>
+
+      <!-- Providers -->
+      <div class="col-lg-7">
+        <section class="card-app card-pad" aria-labelledby="prov-title" data-reveal>
+          <h2 class="h5 fw-bold mb-1" id="prov-title"><i class="bi bi-plug text-primary" aria-hidden="true"></i> Mock provider fees</h2>
+          <p class="small text-muted">Configurable mock assumptions — not the real providers' prices. Fee is charged in the <b>target</b> currency: <span class="mono">fee = converted × % / 100 + fixed(USD → target)</span>.</p>
+          <form id="prov-form" novalidate>
+            <div class="d-grid gap-3" id="prov-rows"></div>
+            <button type="submit" class="btn-glow mt-3"><i class="bi bi-save" aria-hidden="true"></i> Save provider settings</button>
+          </form>
+        </section>
+      </div>
+
+      <!-- Simulation -->
+      <div class="col-lg-5">
+        <section class="card-app card-pad" aria-labelledby="sim-title" data-reveal>
+          <h2 class="h5 fw-bold mb-1" id="sim-title"><i class="bi bi-cpu text-primary" aria-hidden="true"></i> Simulation behaviour</h2>
+          <p class="small text-muted">Deterministic by design — no random failures.</p>
+          <form id="sim-form" class="d-grid gap-3">
+            <div>
+              <label class="form-label" for="s-mode">Outcome mode</label>
+              <select class="form-select" id="s-mode">
+                <option value="rule_based">Rule-based (R1 .13 cents · R2 &gt; 25,000 USD · R3 disabled provider)</option>
+                <option value="success">Always succeed</option>
+                <option value="failure">Always fail</option>
+              </select>
+            </div>
+            <div>
+              <label class="form-label" for="s-fail">Forced failure reason <span class="text-muted fw-normal">(when "Always fail")</span></label>
+              <select class="form-select" id="s-fail"></select>
+            </div>
+            <div>
+              <span class="form-label d-block">Pipeline latency</span>
+              <div class="segmented" role="radiogroup" aria-label="Pipeline latency">
+                <input type="radio" name="lat" id="lat-r" value="realistic"><label for="lat-r"><i class="bi bi-hourglass-split" aria-hidden="true"></i>Animated</label>
+                <input type="radio" name="lat" id="lat-i" value="instant"><label for="lat-i"><i class="bi bi-lightning" aria-hidden="true"></i>Instant</label>
+              </div>
+            </div>
+            <div>
+              <span class="form-label d-block">Theme</span>
+              <div class="segmented" role="radiogroup" aria-label="Theme">
+                <input type="radio" name="theme" id="th-d" value="dusk"><label for="th-d"><i class="bi bi-moon-stars" aria-hidden="true"></i>Dusk</label>
+                <input type="radio" name="theme" id="th-l" value="day"><label for="th-l"><i class="bi bi-sun" aria-hidden="true"></i>Day</label>
+              </div>
+            </div>
+          </form>
+        </section>
+      </div>
+
+      <!-- Storage / danger zone -->
+      <div class="col-12">
+        <section class="card-app card-pad danger-zone" aria-labelledby="dz-title" data-reveal>
+          <div class="row g-3 align-items-center">
+            <div class="col-lg-5">
+              <h2 class="h5 fw-bold mb-1" id="dz-title"><i class="bi bi-hdd-stack text-primary" aria-hidden="true"></i> Local storage &amp; reset</h2>
+              <p class="small text-muted mb-0">localStorage is a single-browser demo store — not shared across devices and not secure payment storage. No credentials or card data are ever stored.</p>
+            </div>
+            <div class="col-lg-3"><div class="small" id="storage-diag"></div></div>
+            <div class="col-lg-4 d-flex flex-wrap gap-2 justify-content-lg-end">
+              <button type="button" class="btn-soft" data-reset="rates">Reset rates</button>
+              <button type="button" class="btn-soft" data-reset="settings">Reset settings</button>
+              <button type="button" class="btn-soft text-danger" data-reset="all">Reset all demo data</button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </div>
+  </main>
+
+  <div class="modal fade" id="reset-modal" tabindex="-1" aria-labelledby="reset-title" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered"><div class="modal-content">
+      <div class="modal-header"><h2 class="modal-title h5" id="reset-title">Reset demo data?</h2><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+      <div class="modal-body" id="reset-body"></div>
+      <div class="modal-footer"><button type="button" class="btn-soft" data-bs-dismiss="modal">Cancel</button><button type="button" class="btn btn-danger rounded-3 fw-semibold" id="reset-confirm">Reset</button></div>
+    </div></div>
+  </div>
+
+  <div id="app-footer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="js/currency.js"></script>
+  <script src="js/live-rates.js"></script>
+  <script src="js/payment-simulator.js"></script>
+  <script src="js/storage.js"></script>
+  <script src="js/ui.js"></script>
+  <script src="js/motion.js"></script>
+  <script src="js/scene.js"></script>
+  <script src="js/settings.js"></script>
+</body>
+</html>

@@ -3,13 +3,45 @@
 > **Educational prototype (PST_PD_045 · FinTech · Level 4).**
 > PayBridge **simulates** payments. It never connects to Stripe, Razorpay or any bank, never collects card details, and never moves money. Exchange rates are either **live reference rates** (European Central Bank and fallbacks, clearly labelled, not executable quotes) or an **illustrative demo table**; you can switch between them.
 
-A merchant enters an amount, picks source and target currencies (USD, INR, EUR), reads the demo exchange rate, compares two mock providers, and runs a simulated payment that ends in success or failure. Every attempt is saved as a read-only snapshot in the browser so an operations analyst can filter, inspect, chart and export it later. A React Native companion app (Expo Go) shows the same checkout in a mobile bottom sheet, and its numbers are identical to the web app's.
+A merchant enters an amount, picks source and target currencies (USD, INR, EUR), reads the live (or demo) exchange rate, compares two mock providers, and runs a simulated payment that ends in success or failure. Every attempt is saved as a read-only snapshot in the browser so an operations analyst can filter, inspect, chart and export it later. A React Native companion app (Expo Go) shows the same checkout in a mobile bottom sheet, and its numbers are identical to the web app's.
 
 ![Checkout](screenshots/web-checkout.jpg)
 
-| Result | History | Mobile bottom sheet |
+## Screenshots
+
+### Web: checkout and payment flow
+| Live reference rate and providers | Review | Payment pipeline |
 |---|---|---|
-| ![Result](screenshots/web-result-success.jpg) | ![History](screenshots/web-history.jpg) | ![Mobile sheet](screenshots/mobile-bottom-sheet.jpg) |
+| ![Live rate panel with Live/Demo switch, flowing coins and mock providers](screenshots/web-checkout-live-rates.jpg) | ![Review simulated payment modal](screenshots/web-review.jpg) | ![Animated state machine: created, authorising, processing](screenshots/web-payment-pipeline.jpg) |
+
+| Simulated success | Simulated failure (rule R1) | Phone width (390 px) |
+|---|---|---|
+| ![Simulated payment successful receipt](screenshots/web-result-success.jpg) | ![Simulated payment failed, issuer decline for .13 cents](screenshots/web-result-failed.jpg) | ![Checkout at phone width](screenshots/web-phone-checkout.jpg) |
+
+### Web: history and settings
+| History and analytics | Filters and records | Transaction details |
+|---|---|---|
+| ![History KPIs and charts](screenshots/web-history.jpg) | ![Transaction table with filters](screenshots/web-history-list.jpg) | ![Read-only transaction details drawer](screenshots/web-history-details.jpg) |
+
+| Exchange-rate source (live vs demo) | Demo rate matrix and settings |
+|---|---|
+| ![Live reference rates compared with the demo table](screenshots/web-settings.jpg) | ![Heat-mapped demo rate matrix, base-rate editor and simulation settings](screenshots/web-settings-matrix.jpg) |
+
+### Web: product tour
+| Hero | Clarity | Harmony |
+|---|---|---|
+| ![BRIDGE hero scene](screenshots/web-tour.jpg) | ![Clarity chapter, waterfall scene](screenshots/web-tour-clarity.jpg) | ![Harmony chapter, grove scene](screenshots/web-tour-harmony.jpg) |
+
+| Certainty | How a payment flows |
+|---|---|
+| ![Certainty chapter, summit scene](screenshots/web-tour-certainty.jpg) | ![Scroll-highlighted payment steps](screenshots/web-tour-flow.jpg) |
+
+### Mobile companion (Expo)
+| Checkout | Live rate card | Review bottom sheet | Result |
+|---|---|---|---|
+| ![Mobile checkout](screenshots/mobile-checkout.jpg) | ![Live reference rate card with Live/Demo switch](screenshots/mobile-live-rate.jpg) | ![Checkout bottom sheet](screenshots/mobile-bottom-sheet.jpg) | ![Simulated payment result](screenshots/mobile-result.jpg) |
+
+Screenshots were captured with headless Chrome against the running app: desktop at 1440×900 (1.5× scale), phone at 390×844 (2× scale).
 
 ---
 

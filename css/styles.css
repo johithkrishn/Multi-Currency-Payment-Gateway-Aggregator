@@ -1013,3 +1013,15 @@ main { animation: pageIn 0.55s var(--pb-ease) both; }
 #rate-delta { color: var(--pb-muted); }
 .live-table td, .live-table th { padding: 10px 12px; font-variant-numeric: tabular-nums; }
 @media (prefers-reduced-motion: reduce) { .live-dot::after { animation: none; } }
+/* Keep gradient headline words readable over the bright parts of a scene. */
+.scene-band .grad-text { filter: drop-shadow(0 2px 2px rgba(15, 11, 38, 0.55)) drop-shadow(0 8px 24px rgba(15, 11, 38, 0.65)); }
+/* Soft scrim behind banner copy so headlines stay readable over bright peaks. */
+.scene-band::before {
+  content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background: linear-gradient(90deg, rgba(15, 11, 38, 0.72) 0%, rgba(15, 11, 38, 0.45) 38%, rgba(15, 11, 38, 0) 68%);
+}
+.scene-band .band-inner { position: relative; z-index: 1; }
+@media (max-width: 767.98px) { .scene-band::before { background: linear-gradient(180deg, rgba(15, 11, 38, 0.2), rgba(15, 11, 38, 0.65)); } }
+/* Inputs have an intrinsic width (size=20); let the big amount field shrink on phones. */
+.amount-input { width: 100%; min-width: 0; }
+.amount-wrap { min-width: 0; max-width: 100%; }

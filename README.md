@@ -3,6 +3,8 @@
 > **Educational prototype (PST_PD_045 · FinTech · Level 4).**
 > PayBridge **simulates** payments. It never connects to Stripe, Razorpay or any bank, never collects card details, and never moves money. Exchange rates are either **live reference rates** (European Central Bank and fallbacks, clearly labelled, not executable quotes) or an **illustrative demo table**; you can switch between them.
 
+**Live demo:** <https://johithkrishn.github.io/Multi-Currency-Payment-Gateway-Aggregator/> (Checkout · [History](https://johithkrishn.github.io/Multi-Currency-Payment-Gateway-Aggregator/history.html) · [FX & Settings](https://johithkrishn.github.io/Multi-Currency-Payment-Gateway-Aggregator/settings.html) · [Tour](https://johithkrishn.github.io/Multi-Currency-Payment-Gateway-Aggregator/tour.html))
+
 A merchant enters an amount, picks source and target currencies (USD, INR, EUR), reads the live (or demo) exchange rate, compares two mock providers, and runs a simulated payment that ends in success or failure. Every attempt is saved as a read-only snapshot in the browser so an operations analyst can filter, inspect, chart and export it later. A React Native companion app (Expo Go) shows the same checkout in a mobile bottom sheet, and its numbers are identical to the web app's.
 
 ![Checkout](screenshots/web-checkout.jpg)
@@ -238,7 +240,11 @@ See [tests/conversion-cases.md](tests/conversion-cases.md) for the full table an
 
 The web app is a static site in `web/` with no build step.
 - **Vercel:** import the repo and set **Root Directory = `web`**.
-- **GitHub Pages:** publish the `web/` folder, for example with a Pages workflow that uploads `web/` as the artifact, or by copying `web/` into `docs/`.
+- **GitHub Pages (live):** the site is served from the `gh-pages` branch, which holds only the contents of `web/`. After changing anything in `web/` and committing to `main`, redeploy with:
+  ```bash
+  git push origin "$(git subtree split --prefix web main)":refs/heads/gh-pages
+  ```
+  Pages rebuilds in about a minute.
 
 ## Limitations (by design)
 

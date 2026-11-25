@@ -58,7 +58,7 @@
       return { data: clone(fallback), error: "Saved data could not be read in this browser." };
     }
     if (raw === null || raw === undefined) {
-      return { data: clone(fallback), error: isAvailable() ? null : "Browser storage is unavailable. Data will only last for this tab." };
+      return { data: clone(fallback), error: isAvailable() ? null : "Browser storage is unavailable. Data is only held in memory on this page and is lost if you leave or reload." };
     }
     try {
       const parsed = JSON.parse(raw);
@@ -112,10 +112,20 @@
 
   /** Prepend a record (save-before-display, PRD §10.6). */
   function addTransaction(txn) {
+    const persistent = isAvailable();
     const current = loadTransactions();
     if (current.corrupt) return { ok: false, error: current.error };
+    if (persistent && current.error) return { ok: false, error: current.error };
     const next = [txn].concat(current.data);
-    return write(KEYS.TRANSACTIONS, next);
+    const result = write(KEYS.TRANSACTIONS, next);
+    if (!result.ok) return result;
+    if (!persistent) {
+      return {
+        ok: true,
+        warning: "Browser storage is unavailable. This attempt is only in memory on this page and will be lost if you leave or reload.",
+      };
+    }
+    return result;
   }
 
   function saveTransactions(list) {

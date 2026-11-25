@@ -250,7 +250,7 @@ The web app is a static site in `web/` with no build step.
 
 - **No real payments.** There are no provider SDKs or APIs, no card or bank fields, and no settlement, refunds or compliance (PCI DSS, tax, cross-border). The provider names describe a checkout *pattern* only.
 - **Reference rates, not quotes.** Live mode shows published reference rates, updated once per business day, which no provider will execute. Demo mode shows illustrative values. Either way the rate is snapshotted into each record, and no real payment happens. The mobile companion uses the same Live/Demo sources; its live snapshot is kept in memory for the app session only.
-- **Browser-local history.** localStorage is per browser and per device, can be cleared by the user, and is not secure storage. Corrupt data is backed up and recovered safely, and if storage is unavailable the app falls back to memory for the current tab with a visible warning.
+- **Browser-local history.** localStorage is per browser and per device, can be cleared by the user, and is not secure storage. Corrupt data is backed up and recovered safely. If storage is unavailable, a simulated attempt is held in memory on the current page and the result warns that it will not appear in the separate history page or survive leaving or reloading that page.
 - **Mobile history** is held in memory for the current app session only and is not shared with the web app.
 - No authentication, merchant accounts or multi-user permissions (out of scope per PRD §6.5).
 

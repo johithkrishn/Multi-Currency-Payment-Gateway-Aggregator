@@ -5,7 +5,7 @@
   "description": "PayBridge — educational multi-currency payment gateway aggregator demo (web + React Native companion). Simulation only: no real payments.",
   "scripts": {
     "start": "node tools/serve.mjs 5960",
-    "test": "node --test tests/core.test.js tests/live-rates.test.js",
+    "test": "node --test tests/core.test.js tests/live-rates.test.js tests/storage.test.js",
     "fx": "python3 tools/fx_helper.py --table",
     "sync-core": "node tools/sync-core.mjs"
   },

@@ -34,7 +34,7 @@
   };
 
   const FAILURE_REASONS = {
-    SIM_ISSUER_DECLINED: { code: "SIM_ISSUER_DECLINED", message: "Simulated issuer decline (demo rule: amount ending in .13)." },
+    SIM_ISSUER_DECLINED: { code: "SIM_ISSUER_DECLINED", message: "Simulated issuer decline (forced by demo settings)." },
     SIM_RISK_LIMIT: { code: "SIM_RISK_LIMIT", message: "Simulated risk-limit decline (demo rule: above 25,000 USD equivalent)." },
     SIM_PROVIDER_UNAVAILABLE: { code: "SIM_PROVIDER_UNAVAILABLE", message: "Simulated provider unavailable (mock provider is disabled)." },
     SIM_PROVIDER_TIMEOUT: { code: "SIM_PROVIDER_TIMEOUT", message: "Simulated provider timeout (demo failure)." },
@@ -68,7 +68,7 @@
     }
     // rule_based
     const cents = Math.round((input.sourceAmount % 1) * 100);
-    if (cents === 13) return failed("SIM_ISSUER_DECLINED", "R1 amount ends in .13");
+    if (cents === 13) return failed("SIM_ISSUER_DECLINED", "R1 amount ends in .13", "Simulated issuer decline (demo rule: amount ending in .13).");
     const usdRate = Currency.getRate(input.table, input.sourceCurrency, "USD");
     if (usdRate && input.sourceAmount * usdRate > RISK_LIMIT_USD) return failed("SIM_RISK_LIMIT", "R2 above risk limit");
     if (input.provider && input.provider.enabled === false) return failed("SIM_PROVIDER_UNAVAILABLE", "R3 provider disabled");
@@ -77,8 +77,8 @@
     function ok(rule) {
       return { status: "SUCCESS", failureCode: null, failureReason: null, rule: rule };
     }
-    function failed(code, rule) {
-      return { status: "FAILED", failureCode: code, failureReason: FAILURE_REASONS[code].message, rule: rule };
+    function failed(code, rule, reason) {
+      return { status: "FAILED", failureCode: code, failureReason: reason || FAILURE_REASONS[code].message, rule: rule };
     }
   }
 

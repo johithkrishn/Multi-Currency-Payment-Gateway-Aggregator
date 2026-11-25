@@ -546,7 +546,7 @@
     state.busy = false;
     reviewModal.hide();
 
-    showResult(txn, { saveError: saved.ok ? null : saved.error, fresh: true });
+    showResult(txn, { saveNotice: saved.ok ? (saved.warning || null) : saved.error, fresh: true });
     state.startedAt = null;
     refreshHistoryCount();
   }
@@ -583,7 +583,7 @@
       (t.durationMs ? '<div class="small text-muted mt-2"><i class="bi bi-stopwatch" aria-hidden="true"></i> Checkout completed in <b>' + (t.durationMs / 1000).toFixed(1) + " s</b>" + (t.durationMs <= 30000 ? " — within the 30-second product promise" : "") + "</div>" : "") +
       "</div>" +
       '<div class="card-pad">' +
-      (o.saveError ? '<div class="alert alert-warning small d-flex gap-2" role="alert"><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>' + esc(o.saveError) + "</div>" : "") +
+      (o.saveNotice ? '<div class="alert alert-warning small d-flex gap-2" role="alert"><i class="bi bi-exclamation-triangle-fill" aria-hidden="true"></i>' + esc(o.saveNotice) + "</div>" : "") +
       '<div class="row g-4">' +
       '<div class="col-lg-7"><h2 class="h6 text-muted text-uppercase small fw-bold mb-3">Transaction details</h2><div class="detail-grid">' +
       cell("Status", UI.statusBadge(t.status), true) +

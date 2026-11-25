@@ -119,6 +119,27 @@ for (const [name, { C, S }] of Object.entries(impls)) {
     });
   }
 
+  test(`[${name}] forced issuer decline does not claim the amount ended in .13`, () => {
+    const r = S.decideOutcome({
+      mode: "failure", forcedFailure: "SIM_ISSUER_DECLINED", sourceAmount: 2.12, sourceCurrency: "USD",
+      table, provider: provider(C, "stripe_mock"),
+    });
+    assert.equal(r.status, "FAILED");
+    assert.equal(r.failureCode, "SIM_ISSUER_DECLINED");
+    assert.equal(r.rule, "Demo control: always fail");
+    assert.equal(r.failureReason, "Simulated issuer decline (forced by demo settings).");
+  });
+
+  test(`[${name}] rule-based issuer decline explains its .13 trigger`, () => {
+    const r = S.decideOutcome({
+      mode: "rule_based", sourceAmount: 2.13, sourceCurrency: "USD", table,
+      provider: provider(C, "stripe_mock"),
+    });
+    assert.equal(r.status, "FAILED");
+    assert.equal(r.failureCode, "SIM_ISSUER_DECLINED");
+    assert.equal(r.failureReason, "Simulated issuer decline (demo rule: amount ending in .13).");
+  });
+
   test(`[${name}] outcomes are deterministic (same input → same result, 200×)`, () => {
     const input = { mode: "rule_based", sourceAmount: 77.13, sourceCurrency: "USD", table, provider: provider(C, "stripe_mock") };
     const first = JSON.stringify(S.decideOutcome(input));

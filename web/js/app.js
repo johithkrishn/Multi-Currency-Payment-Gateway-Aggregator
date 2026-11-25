@@ -624,7 +624,7 @@
     window.scrollTo({ top: 0, behavior: UI.reduceMotion ? "auto" : "smooth" });
     document.getElementById("sr-announcer").textContent = (ok ? "Simulated payment successful. " : "Simulated payment failed. ") + "Reference " + t.id;
     if (ok && o.fresh) setTimeout(function () { UI.confetti(document.querySelector(".result-icon")); }, 500);
-    if (o.fresh) UI.toast(ok ? "Simulated success recorded in history." : "Simulated failure recorded in history.", ok ? "success" : "warning");
+    if (o.fresh && !o.saveNotice) UI.toast(ok ? "Simulated success recorded in history." : "Simulated failure recorded in history.", ok ? "success" : "warning");
   }
 
   function cell(label, value, html) {
